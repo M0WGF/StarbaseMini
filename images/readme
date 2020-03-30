@@ -1,0 +1,7 @@
+background image max dimension 400 x 400 in size.
+Colour Space : sRGB.
+Image should be transparent.
+
+The background image and colour gradient are set via the cascading stylesheets located in the css folder.
+
+Look for the QWidget#mplwindow tag.

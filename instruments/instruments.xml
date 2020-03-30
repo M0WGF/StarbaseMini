@@ -1,0 +1,31 @@
+<?xml version="1.0" standalone="yes"?>
+
+<Instruments>
+    <!-- Instrument Name and File Name are case sensitive -->
+
+    <Instrument>
+        <Name>Staribus 4 Channel Logger</Name>
+        <File>staribus-4ch-logger.xml</File>
+    </Instrument>
+
+    <Instrument>
+        <Name>Staribus 8 Channel Logger</Name>
+        <File>staribus-8ch-logger.xml</File>
+    </Instrument>
+
+    <Instrument>
+        <Name>Staribus VLF Instrument</Name>
+        <File>staribus-vlf.xml</File>
+    </Instrument>
+
+    <Instrument>
+        <Name>Staribus Magnetometer</Name>
+        <File>staribus-magnetometer.xml</File>
+    </Instrument>
+
+    <Instrument>
+        <Name>Starinet 6 Channel Beaglebone Logger</Name>
+        <File>starinet-6ch-beagle-logger.xml</File>
+    </Instrument>
+
+</Instruments>

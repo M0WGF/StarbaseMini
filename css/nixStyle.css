@@ -1,0 +1,101 @@
+QGroupBox {
+    border: 1px solid gray;
+    border-radius: 9px;
+    margin-top: 0.5em;
+}
+
+QGroupBox::title {
+    subcontrol-origin: margin;
+    left: 10px;
+    padding: 3px 3px 0 3px;
+}
+
+QPlainTextEdit {
+    background-color: '#FFFFE0';
+}
+
+QWidget#mplwindow {
+    color: qlineargradient(spread:pad, x1:0.497872, y1:0, x2:0.485106, y2:1, stop:0 rgba(0, 67, 191, 255), stop:1 rgba(0, 0, 0, 255));
+    background: qlineargradient( x1:0.497872, y1:0, x2:0.485106, y2:1, stop:0 #000, stop:1 #0043BF);
+    background-image: url(images/background.png);
+    background-position:center;
+    background-repeat:no-repeat;
+}
+
+QTabWidget::pane {
+    border: 1px solid gray;
+    border-radius: 9px;
+}
+
+
+QProgressBar {
+    border: 0px;
+    text-align: center;
+    padding: 0px;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    width: 15px;
+}
+
+QProgressBar::chunk {
+    background: #00B2EE;
+    border-top-right-radius: 3px;
+    border-top-left-radius: 3px;
+    border-bottom-right-radius: 3px;
+    border-bottom-left-radius: 3px;
+    border: 0px;
+}
+
+QLineEdit:enabled {
+    background-color: #FFFFFF;
+}
+
+QLineEdit:disabled {
+    background-color: #CECECE;
+}
+
+QPushButton#executeButton:enabled {
+            background-color: #c4df9b ;
+            }
+
+QPushButton#executeButton:disabled {
+            background-color: #b6c3d1 ;
+            }
+
+QPushButton#executeButton:hover {
+            background-color: #b9d988 ;
+            }
+
+QPushButton#executeButton:pressed {
+            background-color: #a2cc61 ;
+            }
+
+
+QPushButton#executeButton {
+        border-radius: 5px;
+        padding: 0.2em 0.2em 0.3em 0.2em;
+}
+
+QTextBrowser#metadataEdit {
+        font-size: 10pt;
+}
+
+QLineEdit#metadataNotesEdit {
+        font-size: 10pt;
+}
+
+QTextEdit#releasenotesText {
+        font-size: 10pt;
+}
+
+/* QScrollBar#toolBox:horizontal {
+height: 0px;
+width: 0px;
+}
+
+QScrollBar#toolBox:vertical {
+height: 0px;
+width: 0px;
+} */

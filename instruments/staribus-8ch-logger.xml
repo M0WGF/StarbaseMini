@@ -1,0 +1,377 @@
+<?xml version="1.0" standalone="yes"?>
+
+<Instrument>
+    <Identifier>Staribus 8 Channel Logger</Identifier>
+    <Description>A Staribus 8 Channel Data Logger</Description>
+    <StaribusAddress>002</StaribusAddress>
+    <StaribusPortType>RS232</StaribusPortType>
+    <StaribusPort>COM1</StaribusPort>
+    <StaribusPortBaudrate>57600</StaribusPortBaudrate>
+    <StaribusPortTimeout>5</StaribusPortTimeout>
+    <StaribusPortAutodetect>True</StaribusPortAutodetect>
+    <NumberOfChannels>9</NumberOfChannels>
+    <DataTranslator>StaribusBlock</DataTranslator>
+
+    <Plugin>
+        <!-- A virtual Plugin -->
+        <Identifier>DataCapture</Identifier>
+        <Description>The Data Capture Plugin Module</Description>
+        <CommandCodeBase>03</CommandCodeBase>
+
+        <Command>
+            <Identifier>getSpace</Identifier>
+            <CommandCode>00</CommandCode>
+            <CommandVariant>0002</CommandVariant>
+            <Description>Gets the percentage of available storage remaining.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>DecimalInteger</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Units>%</Units>  # Any string you like this is displayed in the statusMessage after the response.
+                <Regex>^([0-9][0-9][0-9])$</Regex> # Regex of response can be ACK if response is ACK
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>getData</Identifier>
+            <CommandCode>01</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Gets the data produced by the Instrument.</Description>
+            <SendToPort>False</SendToPort>
+            <BlockedDataCommand>02,03</BlockedDataCommand>
+        </Command>
+
+        <Command>
+            <Identifier>getDataBlockCount</Identifier>
+            <CommandCode>02</CommandCode>
+            <CommandVariant>0002</CommandVariant>
+            <Description>Gets the number of blocks in the Instrument data.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>HexInteger</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>^[0-9A-F][0-9A-F][0-9A-F][0-9A-F]$</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>getDataBlock</Identifier>
+            <CommandCode>03</CommandCode>
+            <CommandVariant>0002</CommandVariant>
+            <Description>Gets the specified block of Instrument data.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>HexInteger</TrafficDataType>
+                <Regex>^[0-9A-F][0-9A-F][0-9A-F][0-9A-F]$</Regex>
+                <Tooltip>Allowed Values: BlockID 0000 to FFFF</Tooltip>
+            </Parameter>
+            <Response>
+                <DataTypeName>HexInteger</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>^(((19|20)\d\d([-])(0[1-9]|1[012])([-])(0[1-9]|[12][0-9]|3[01]))\s((([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9]))(\s[+\-](\d{3})\s\d{4}\s{1,3})((\d{4}){120}))$</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>getRate</Identifier>
+            <CommandCode>04</CommandCode>
+            <CommandVariant>0002</CommandVariant>
+            <Description>Get the data capture sampling rate.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>DecimalInteger</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Units>/s</Units>  # Any string you like this is displayed in the statusMessage after the response.
+                <Regex>^([0-9][0-9][0-9][0-9])$</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>setRate</Identifier>
+            <CommandCode>05</CommandCode>
+            <CommandVariant>0002</CommandVariant>
+            <Description>Set the data capture sampling rate.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>DecimalInteger</TrafficDataType>
+                <Regex>^([1-9][0-9]?|1[0-9]{2}|2[0-4][0-9]|25[0-5])$</Regex>
+                <Tooltip>Allowed Values: 1 to 255 seconds</Tooltip>
+            </Parameter>
+            <Response>
+                <Regex>ACK</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>capture</Identifier>
+            <CommandCode>06</CommandCode>
+            <CommandVariant>0002</CommandVariant>
+            <Description>Set the data capture sampling rate.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>Boolean</TrafficDataType>
+                <Choices>False,True</Choices>
+                <Tooltip>Starts or stops data capture</Tooltip>
+            </Parameter>
+            <Response>
+                <Regex>ACK</Regex>
+            </Response>
+        </Command>
+
+    </Plugin>
+
+    <Plugin>
+        <!-- A virtual Plugin -->
+        <Identifier>LoggerPlugin</Identifier>
+        <Description>The Logger Plugin Module</Description>
+        <CommandCodeBase>04</CommandCodeBase>
+
+        <Command>
+            <Identifier>getRealtimeData</Identifier>
+            <CommandCode>00</CommandCode>
+            <CommandVariant>0002</CommandVariant>
+            <Description>Gets the realtime output of the 4 channel logger.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>DecimalInteger</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>^((-|\+)?\d*(\.\d+)?\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)\x1E0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500))$</Regex> # Regex of response can be ACK if response is ACK
+            </Response>
+        </Command>
+    </Plugin>
+
+    <Plugin>
+        <!-- A virtual Plugin -->
+        <Identifier>Analogue</Identifier>
+        <Description>The Analogue Plugin Module</Description>
+        <CommandCodeBase>02</CommandCodeBase>
+
+        <Command>
+            <Identifier>getA2D</Identifier>
+            <CommandCode>00</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Gets the voltage read by the selected A2D channel.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>UnsignedDecimalByte</TrafficDataType>
+                <Regex>^[0-7]$</Regex>
+                <Tooltip>Allowed Values: Channels 0 to 7</Tooltip>
+            </Parameter>
+            <Response>
+                <DataTypeName>DecimalInteger</DataTypeName>
+                <Units>mV</Units>
+                <Regex>^0*([0-9]{1,3}|1[0-9]{3}|2[0-4][0-9]{2}|2500)$</Regex>
+            </Response>
+        </Command>
+    </Plugin>
+
+    <Plugin>
+        <!-- A virtual Plugin -->
+        <Identifier>Utilities</Identifier>
+        <Description>The Utilities Plugin Module</Description>
+        <CommandCodeBase>01</CommandCodeBase>
+
+        <Command>
+            <Identifier>getClockDate</Identifier>
+            <CommandCode>00</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Get the current clock time from the controller.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>Dimensionless</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>^((19|20)\d\d([-])(0[1-9]|1[012])([-])(0[1-9]|[12][0-9]|3[01]))$</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>setClockDate</Identifier>
+            <CommandCode>01</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Sets the Date on the Controller clock.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>String</TrafficDataType>
+                <Regex>^(19|20)\d\d([-])(0[1-9]|1[012])([-])(0[1-9]|[12][0-9]|3[01])$</Regex>
+                <Tooltip>Format YYYY-MM-DD</Tooltip>
+            </Parameter>
+            <Response>
+                <DataTypeName>Dimensionless</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>ACK</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>getClockTime</Identifier>
+            <CommandCode>02</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Gets the Time from the Controller clock.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>Dimensionless</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>^((([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9]))$</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>setClockTime</Identifier>
+            <CommandCode>03</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Sets the Time on the Controller clock.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>String</TrafficDataType>
+                <Regex>^(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])$</Regex>
+                <Tooltip>Format HH:MM:SS</Tooltip>
+            </Parameter>
+            <Response>
+                <DataTypeName>Dimensionless</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>^(([0-1][0-9])|([2][0-3])):([0-5][0-9]):([0-5][0-9])$</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>getTemperature</Identifier>
+            <CommandCode>04</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Gets the Temperature of the Controller (Celsius).</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>Dimensionless</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Units>Celsius</Units>  # Any string you like this is displayed in the statusMessage after the response.
+                <Regex>^((-|\+)?\d*(\.\d+)?)$</Regex>
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>enableBacklight</Identifier>
+            <CommandCode>08</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Controls the LCD Display backlight.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>Boolean</TrafficDataType>
+                <Choices>False,True</Choices>
+                <Tooltip>switch off lcd backlight, switch on lcd backlight</Tooltip>
+            </Parameter>
+            <Response>
+                <Regex>ACK</Regex>
+            </Response>
+        </Command>
+    </Plugin>
+
+
+    <!-- Plugins are loaded in order or appearance.  Core normally resides after all other plugins, well it does -->
+    <!-- in Starbase -->
+
+    <Plugin>
+        <Identifier>Core</Identifier>
+        <Description>The Core Module</Description>
+        <!-- The DataCapture Plugin is always CommandCodeBase 50 -->
+        <CommandCodeBase>00</CommandCodeBase>
+
+        <Command>
+            <Identifier>reset</Identifier>
+            <CommandCode>00</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Allowed values: Soft, Defaults, Staribus.</Description>
+            <SendToPort>True</SendToPort>
+            <Parameter>
+                <TrafficDataType>NumericIndexedList</TrafficDataType>
+                <Choices>Soft,Defaults</Choices>
+                <Tooltip>Soft,Defaults</Tooltip>
+            </Parameter>
+            <Response>
+                <Regex>ACK</Regex> # Regex of response can be ACK if response is ACK
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>ping</Identifier>
+            <CommandCode>01</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Pings the Controller.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <Regex>ACK</Regex> # Regex of response can be ACK if response is ACK
+            </Response>
+        </Command>
+
+        <Command>
+            <Identifier>getVersion</Identifier>
+            <CommandCode>0A</CommandCode>
+            <CommandVariant>0000</CommandVariant>
+            <Description>Gets the Version of the Controller OS.</Description>
+            <SendToPort>True</SendToPort>
+            <Response>
+                <DataTypeName>String</DataTypeName>  # DecimalInteger, DecimalFloat, HexInteger, String
+                <Regex>^(Ver:\s[A-Z]*\d*\s*)$</Regex> # Regex of response can be ACK if response is ACK
+            </Response>
+        </Command>
+    </Plugin>
+
+    <ChartMetadata>
+        <YaxisLabel>mv</YaxisLabel>
+        <YaxisRange>0,2500</YaxisRange>
+        <YaxisScale>Lin</YaxisScale>
+        <XaxisLabel>Time (UTC)</XaxisLabel>
+    </ChartMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Temperature</ChannelLabel>
+        <ChannelColour>#E31A1C</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>Celsius</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 0</ChannelLabel>
+        <ChannelColour>#33A02C</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 1</ChannelLabel>
+        <ChannelColour>#1F78B4</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 2</ChannelLabel>
+        <ChannelColour>#FF7F00</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 3</ChannelLabel>
+        <ChannelColour>#CAB2D6</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 4</ChannelLabel>
+        <ChannelColour>#F69A99</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 5</ChannelLabel>
+        <ChannelColour>#B2DF8A</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 6</ChannelLabel>
+        <ChannelColour>#A6CEE3</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+    <ChannelMetadata>
+        <ChannelLabel>Channel 7</ChannelLabel>
+        <ChannelColour>#FDBF6F</ChannelColour>
+        <ChannelDataTypeName>DecimalInteger</ChannelDataTypeName>
+        <ChannelUnit>mV</ChannelUnit>
+    </ChannelMetadata>
+
+</Instrument>

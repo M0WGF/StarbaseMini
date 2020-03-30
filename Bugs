@@ -1,0 +1,19 @@
+https://nikolak.com/pyqt-qt-designer-getting-started/
+
+List to do ...
+
+xml_utils instrument importer needs to check the XML is valid more.
+
+
+When get run getData we copy the data blocks sent from the controller to  :  RawDataBlocks and set
+
+		RawDataBlocksAvailable = True
+		DataSource = ‘instrument’
+
+Once we run the the RawDataBlocks through the data translator successfully we set  : RawData
+
+		RawDataBlocksAvailable = False
+		RawDataSaved = False
+
+Two menu icons are causing sRGB profile error, find and fix them.
+
